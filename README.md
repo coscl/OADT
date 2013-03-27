@@ -5,11 +5,11 @@ openstack deploy project for COSCL
 
 Steps
 
-1 安装部署源
-    Install OS : NeoKylin Server 6.0（在安装过程中选择虚拟化组件）
-    mkdir /opt/openstack/
-    cd /opt/openstack
-    Download the Source code
+1 安装部署源(所有主机网卡请使用eth0)
+    1)Install OS : NeoKylin Server 6.0（在安装过程中选择虚拟化组件）
+    2)mkdir /opt/openstack/
+    3)cd /opt/openstack
+    4)Download the Source code
     
 2 执行安装脚本
     sh install_ns6.0.sh
