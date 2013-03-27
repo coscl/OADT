@@ -1,0 +1,11 @@
+#init database
+
+python manage.py syncdb
+
+service rabbitmq-server start
+
+python manage.py  celeryd -l info -f /var/log/OADT/oadtdeploy.log &
+
+python manage.py runserver 0.0.0.0:8000
+
+

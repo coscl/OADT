@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>安装部署openstack</title>
+
+
+<link type="text/css" rel="stylesheet" href="/static/css/oadt.css" />
+<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}css/icon.css" />
+<link type='text/css' rel='stylesheet'
+	href='{{STATIC_URL}}css/table_view.css' />
+<link type="text/css" rel="stylesheet"
+	href="{{STATIC_URL}}css/cs2c_dialog.css" />
+
+<script src='{{STATIC_URL}}js/common/0_jquery-1.8.2.js'
+	type='text/javascript'></script>
+
+<script src='{{STATIC_URL}}js/common/1_underscore-1.4.2.js'
+	type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/3_backbone-0.9.2.js'
+	type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/4_laconic.js'
+	type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/common.js' type='text/javascript'></script>
+
+<script src='{{STATIC_URL}}js/common/csrf_token_jquery_resolve.js'
+	type='text/javascript'></script>
+
+
+<script src='{{STATIC_URL}}js/common/pagerView.js'
+	type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/searchbox.js'
+	type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/validatebox.js'
+	type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/backbone_ui.js'
+	type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/datagridView.js'
+	type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/ManageView.js'
+	type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/cs2c_dialog.js'
+	type='text/javascript'></script>
+
+<link type="text/css" rel="stylesheet" href="/static/css/index.css" />
+<script src='/static/js/oadt_view.js' type='text/javascript'></script>
+</head>
+
+<body>
+	<div id="logo">
+		<div class="logo_content">
+			<img src="/static/images/logo.PNG" width="138" height="51" />
+		</div>
+	</div>
+
+
+	<div class="header">
+		<div class="rounded_bg">
+			<div class="rounded_footerbg">
+				<div class="rounded">
+					<h2>
+						OADT><span>安装部署openstack</span>
+					</h2>
+					<div class="rounded_leftbg">
+						<div class="main">
+							<div class="os_tle">1.OS的选择</div>
+							<div class="os">
+								OS操作系统列表： <select id="os_type">
+									<option>请选择操作系统</option>
+									<option>中标麒麟高级服务器</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="footer">
+						<div class="footer1">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+					</div>
+					<div id="os_right" style="display: none;" class="right_continue">
+						<img src="/static/images/right-continue.png" width="32"
+							height="32" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="header" id="block2">
+		<div class="rounded_bg">
+			<div class="rounded_footerbg">
+				<div class="rounded">
+					<h3></h3>
+					<div class="rounded_leftbg">
+						<div class="cobbler_main">
+							<div class="cobbler_tle">2.Cobbler的配置</div>
+							<div class="cobbler">
+								<div>
+									安装系统镜像：
+									<!-- <input id="iso_addr" type="text" class="cobbler_put"readonly="readonly"/>&nbsp;
+       
+        <input type="file" name="file" id="selectfiledialog" class="botton"/> -->
+									&nbsp;&nbsp;&nbsp; <input id="selectFile" class="botton"
+										type="button" value="选择" />
+									<p>挂载安装镜像至/mnt，可以是iso或cd，用户可以通过浏览来选择iso或cd路径。</p>
+								</div>
+
+								<div>
+									配置dhcp服务器：<input class="cobbler_put1" name="" type="text"
+										readOnly="readOnly" />&nbsp;<input id="dhcpConfig"
+										class="botton" name="" type="button" value="设置" />
+								</div>
+								<div class="Submit_content">
+									<input id="cobblerconfig" class="submit" name="input"
+										type="button" value="" /> <span>&nbsp;&nbsp;配置过程需要拷贝OS镜像内容，大概需要十分钟。</span>
+								</div>
+
+							</div>
+						</div>
+
+					</div>
+
+					<div class="footer">
+						<div class="footer1">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+					</div>
+					<div id="dhcp_right" style="display: none;" class="right_continue1">
+						<img src="/static/images/right-continue.png" width="32"
+							height="32" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="header" id="block3">
+		<div class="rounded_bg">
+			<div class="rounded_footerbg">
+				<div class="rounded">
+					<h3></h3>
+					<div class="rounded_leftbg">
+						<div class="rounde_rightbg">
+
+							<div class="main">
+								<div class="node_tle">3.添加节点</div>
+								<div class="node">
+									<div>
+										单个节点添加：&nbsp;&nbsp;&nbsp; <input id="add_hostname"
+											class="node_put" type="text" value="主机名称" size="15" />&nbsp;
+										<input id="add_host_ip" class="node_put1" type="text"
+											value="主机IP" size="15" />&nbsp; <input id="add_host_mac"
+											class="node_put2" type="text" value="MAC地址" size="15" />&nbsp;
+										<input id="add_host" class="botton" type="button" value="添加" />
+
+										<p>添加的节点会在下方显示区进行显示，用户可以手动添加或批量导入。</p>
+									</div>
+
+									<div>
+										批量节点添加：&nbsp;&nbsp;&nbsp;&nbsp; <input
+											id="openBatchImportDialog" class="botton" type="button"
+											value="编辑文件" /> <input id="batch_import" class="botton"
+											type="button" value="导入" />
+									</div>
+								</div>
+
+							</div>
+							<div id="table-position" style="position: relative; left: 100px;">
+								<div id="cs2c_datagrid" ></div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="footer">
+						<div class="footer2">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+					</div>
+					<div style="display: none;" class="right_continue1">
+						<img src="/static/images/right-continue.png" width="32"
+							height="32" />
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- ************************页面对话框集合******************************** -->
+
+	<div id="dhcp_dialog" style="display: none;">
+		<table style="margin: 20px;">
+			<tr>
+				<td>Subnet</td>
+				<td><input id="subnet" type="text" value="子网入口地址" /></td>
+			</tr>
+			<tr>
+				<td>Subnet_Netmask</td>
+				<td><input id="subnet_netmask" type="text" value="子网掩码入口地址" /></td>
+			</tr>
+			<tr>
+				<td>Sange_IP_Start</td>
+				<td><input id="ip_start" type="text" value="分配IP起始地址" /></td>
+			</tr>
+			<tr>
+				<td>Range_IP_Stop</td>
+				<td><input id="ip_stop" type="text" value="分配IP结束地址" /></td>
+			</tr>
+			<tr>
+				<td>Gateway</td>
+				<td><input id="gateway" type="text" value="网关" /></td>
+			</tr>
+			<tr>
+				<td>Netmask</td>
+				<td><input id="netmask" type="text" value="子网掩码" /></td>
+			</tr>
+			<tr>
+				<td>Dns</td>
+				<td><input id="dns" type="text" value="" /></td>
+			</tr>
+
+		</table>
+	</div>
+
+	<div id="role_dialog" style="display: none; padding: 20px;">
+		<input type="hidden" id="edit_role_hostname" />
+	</div>
+
+	<div id="config_host_dialog" style="display: none;">
+		<textarea style="width: 500px; height: 290px;"></textarea>
+		<input type="hidden" />
+	</div>
+
+	<!-- ISO或CD选择对话框 -->
+	<div id="select_iso_dialog"
+		style="display: none;">
+
+		<div class="pop_content">
+			<div class="pop_list">
+				<ul>
+					<li>
+					<span><img src="/static/images/triangle_down.gif" width="8" height="8" /></span>
+					<span ><img src="/static/images/file.gif" width="16" height="16" /></span>ISO文件</li>
+					<li id="ISO" style="padding:0 0 10px 20px;"></li>
+					<li>
+					<span><img src="/static/images/triangle_down.gif"	width="8" height="8" /></span>
+					<span ><img src="/static/images/file.gif" width="16" height="16" /></span>CD目录</li>
+					<li id="CD" style="padding:0 0 10px 20px;"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+	<div id="batch_import_dialog" style="display: none;">
+
+		<div class="pop_content">
+			<div class="pop_list">
+				<ul>
+					<li>
+					<span><img src="/static/images/triangle_down.gif" width="8" height="8" /></span>
+					<span ><img src="/static/images/file.gif" width="16" height="16" /></span>节点模板文件</li>
+					<li id="hosttemplate" style="padding:0 0 10px 20px;"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div id="batch_import_edit_dialog" style="display: none;">
+	<textarea style="width: 500px; height: 290px;"></textarea>
+	</div>
+
+	<div id="alert_dialog" style="display: none;padding:20px;">
+	</div>
+
+	<form>{% csrf_token %}</form>
+
+	<!-- ************************pagefooter******************************** -->
+	<div id="pagefooter">
+		<div class="pagefooter">
+			<div class="coscl_logo">
+				<img src="/static/images/coscl_logo.PNG" width="64" height="64" />
+			</div>
+			<div class="company">
+				<p>
+					中国开源云联盟（coscl）：英特尔亚太研发有限公司 / 新浪网技术（中国）有限公司 / 中标软件有限公司 / 上海交通大学 /
+					联想(北京)有限公司 <br /> 中兴通讯股份有限公司 / 北京奇艺世纪科技有限公司 / 北京华胜天成科技股份有限公司
+				</p>
+				<p>
+					观察员单位有：华数传媒网络有限公司 / 中金数据系统有限公司 / 上海兆民云计算科技有限公司 / 北京天地互连信息技术有限公司<br />
+					北京初志科技有限公司 / 北京酷锐达信息技术有限公司
+				</p>
+			</div>
+		</div>
+
+	</div>
+
+</body>
+</html>
+

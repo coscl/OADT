@@ -1,0 +1,345 @@
+@charset "utf-8";
+/* CSS Document */
+html, body {
+    background:url('/static/images/bg.png');
+    color: #000000;
+    font-family: Verdana,Geneva,sans-serif;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+	/*color:#6d7581;*/
+	min-width:1024px;
+	min-height:768px;
+
+}
+
+.logo_content{
+	height:66px;
+	text-align:left;
+	padding:39px 0 0 0;
+}
+.rounded {
+  background:url('/static/images/left-top.png') top left no-repeat;
+  width:100%;
+  }
+
+
+.os_tle{
+	font-size:14px;
+	font-weight:bold;
+	float:left;
+	margin:37px 0 0 80px;
+	color:#7c98ae;
+	
+}
+.os{
+	margin:30px 0 0 80px;
+	float:left;
+	color:#2c2c2c;
+}
+
+.os select{
+	font-size:14px;
+	line-height:25px;
+	color:#2c2c2c;
+	width:257px;
+	height:29px;
+	border:#a7b7c3 1px solid;
+	background:url('/static/images/select_bg.png') repeat-x;
+	
+}
+
+.cobbler{
+	margin:0px 0 0 41px;
+	float:left;
+	color:#2c2c2c;
+	position:relative;
+}
+
+.cobbler_put{
+	width:338px;
+	height:22px; 
+	color:#999999;
+	margin:0 0 0 18px;
+}
+.cobbler_put1{
+	width:338px;
+	height:22px; 
+	color:#999999;
+	margin:0 0 0 0px;
+}
+.cobbler p{
+	margin:4px 0 18px 0;
+	padding:0;
+	color:#b6b6b6;
+}
+.cobbler_tle{
+	font-size:14px;
+	font-weight:bold;
+	float:left;
+	margin:5px 0 0 80px;
+	color:#7c98ae;
+	
+}
+.Submit_content{
+	margin:17px 0 0 102px;
+}
+.Submit_content span{
+	padding:0;
+	margin:0;
+	color:#b6b6b6;
+}
+
+
+.botton{
+	background:url('/static/images/add.png') top left no-repeat;
+    background-position:0;
+	width:75px;
+	height:29px;
+	font-size:14px;
+	border:none;
+	color:#2c2c2c;
+}
+
+.botton:hover{
+	background:url('/static/images/add.png') top left no-repeat;
+	background-position:-83px -4px;
+	padding:0;
+	margin:0;
+	color:#2c2c2c;
+	
+}
+.botton:active{
+	background:url('/static/images/add.png') top left no-repeat;
+	background-position:-166px -4px;
+	color:#2c2c2c;
+	
+}
+
+
+.cobbler .submit{
+	background:url('/static/images/submit.png') top left no-repeat;
+    background-position:0px 0px;
+	width:103px;
+	height:29px;
+	font-size:14px;
+	border:none;	
+}
+.cobbler .submit:hover{
+	background:url('/static/images/submit.png') top left no-repeat;
+    background-position:-111px 0;
+}
+.cobbler .submit:active{
+	background:url('/static/images/submit.png') top left no-repeat;
+    background-position:-222px 0;
+}
+
+
+
+.rounded_bg{
+	background: #FFF url('/static/images/top_bg.png') top left repeat-x;
+}
+.rounded_leftbg{
+	background:url('/static/images/left.png') left repeat-y;
+    height:auto;
+	margin:0;padding:0;
+
+}
+
+.rounde_rightbg{
+		background:url('/static/images/right.png') right repeat-y;
+     	height:auto;
+		
+}
+
+.rounded_footerbg{
+	background: url('/static/images/bottom_bg.png') bottom left repeat-x;
+	position:relative;
+	}
+
+.rounded h2 {
+  background:url('/static/images/right-top.png') top right no-repeat;
+  padding:45px 20px 20px 95px;
+  margin:0;
+  font-size:26px;
+  color:#7c98ae;  
+    }
+	
+.rounded h2 span {
+	font-size:20px;
+}
+
+.rounded h3 {
+  background:url('/static/images/right-top.png') top right no-repeat;
+  padding:33px 20px 20px 95px;
+  margin:0;
+  font-size:26px;
+  color:#7c98ae;  
+    }
+.rounded .main {
+  background:url('/static/images/right.png') top right repeat-y;
+  padding:10px 20px;
+  margin:-2em 0 0 0;
+  height: 112px;
+  }
+	  
+.right_continue{
+	display:block;
+	position:absolute;
+	height:32;
+	width:32px;
+	right: 40px;
+	top: 86px;
+}
+.right_continue1{
+	display:block;
+	position:absolute;
+	height:32;
+	width:32px;
+	right: 40px;
+	top: 56px;
+}	
+.rounded .cobbler_main {
+  background:url('/static/images/right.png') top right repeat-y;
+  padding:10px 20px;
+  margin:-2em 0 0 0;
+  height: 170px;
+      }
+	  
+.os{
+	margin:30px 0 0 80px;
+	float:left;
+}
+.rounded .footer {
+  background:url('/static/images/left-bottom.png') bottom left no-repeat;
+  }
+.rounded .footer1 {
+  color:#888;
+  text-align:right;
+  background:url('/static/images/right-bottom.png') bottom right no-repeat;
+  display:block;
+  padding:10px 20px 20px;
+  margin:-3em 0 0 0;
+  font:0/0;
+  }
+
+  
+/*----------2------------------------ */
+
+.sub{
+	margin:5px 0 0 200px;
+}
+ 
+.pagefooter{
+	height:140px;
+	padding-top:20px;
+}
+.coscl_logo{
+	float:left;
+	margin:0 8px 0 ; 
+}
+.company{
+	float:left;
+	color:#474b4e;
+	width:80%;
+}
+
+.node{
+	margin:0px 0 0 87px;
+	float:left;
+	color:#2c2c2c;	
+}
+.node p{
+	color:#b6b6b6;
+
+}
+.node_put{
+	width:85px;
+	height:22px;
+	margin:0 9px 0 0;
+	border:1px solid #aaaaaa;	
+	text-align:center;
+	color:#999999;
+	margin:0 0 0 2px;
+	
+}
+.node_put1{
+	width:105px;
+	height:22px;
+	margin:0;
+	border:1px solid #aaaaaa;
+	text-align:center;
+	color:#999999;
+}
+ .node_put2{
+	width:140px;
+	height:22px;
+	margin:0 0px 0 0;
+	border:1px solid #aaaaaa;	
+	text-align:center;
+	color:#999999;
+}
+
+.node p{
+	margin:4px 0 18px 0;
+	padding:0;
+}
+.node_tle{
+	font-size:14px;
+	font-weight:bold;
+	float:left;
+	margin:5px 0 0 80px;
+	color:#7c98ae;
+}
+.rounded .footer2 {
+  color:#888;
+  text-align:right;
+  background:url('/static/images/right-bottom.png') bottom right no-repeat;
+  display:block;
+  padding:10px 20px 40px 20px;
+  margin:-3em 0 0 0;
+  font:0/0;
+  }
+
+
+#logo,.header,#pagefooter,#content{
+ margin:0 auto;
+ width:70%;
+ 
+}
+/* 为了蒙板的显示位置添加该样式 */
+.header{
+	position: relative;
+}
+/*--------------------meun--------------------------*/
+
+
+
+.pop_content{
+	width:300px;
+	height:152px;
+	border:1px solid #9a9a9a;
+	margin:3px auto;
+	background: url(/static/images/content_bg.png) top left repeat-x #fafafa;
+	min-height:152px;
+}
+.pop_list ul{
+	padding:0;
+	margin:5px 0 0 5px;
+	color:#555555;
+}
+.pop_list ul li{
+	display:block;
+	list-style:none;
+	margin:0 0 5px 0;
+}
+
+.pop_list span{
+	margin:0 8px 0 0;
+}
+
+#cs2c_datagrid td span:hover{
+	color: #00C0C0;
+	cursor: pointer;
+}

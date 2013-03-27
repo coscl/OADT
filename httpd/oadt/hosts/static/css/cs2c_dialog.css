@@ -1,0 +1,164 @@
+@CHARSET "UTF-8";
+
+.cs2c_dialog{
+	/* -moz-border-radius: 5px 5px 5px 5px; */
+	background: none repeat scroll 0 0 #DCDCDC;
+	border: 1px solid #7C98AE;
+	font-size: 12px;
+	overflow: hidden;
+	/* padding: 5px; */
+	position: absolute;
+	margin: 0 auto;
+}
+.cs2c_dialog_header{
+ background: none repeat scroll 0 0 #7C98AE;
+ color: #FFFFFF;
+ font-weight: bold;
+ padding-left:10px;
+ line-height:25px;
+ font-size: 12px;
+}
+.cs2c_dialog_header a{
+ position: absolute;
+ text-decoration:none;
+ color:#FFFFFF;
+ text-align: right;
+ right:8px;
+}
+.cs2c_dialog_body{
+	background: url("/static/images/content_bg.png") repeat-x scroll left top #FAFAFA;
+    border: 1px solid #9A9A9A;
+    margin: 3px;
+}
+
+.cs2c_dialog_button{
+	padding: 15px 7px 0 0;
+    text-align: right;
+}
+
+.cs2c_dialog_button a{
+ 	 color:#15428B;
+}
+
+.cs2c_dialog_shadow{
+	position:absolute;
+	left:0;
+	top:0;
+	width:100%;
+	height:100%;
+	background:#000;
+	opacity:0.3;
+	filter:alpha(opacity=30);
+	display:block;
+	z-index: 9000;
+}
+
+.dialog-mask{
+	position:absolute;
+	left:0;
+	top:0;
+	background:#787D82;
+	opacity:0.3;
+	filter:alpha(opacity=30);
+	display:none;
+}
+.dialog-mask-msg{
+	position:absolute;
+	cursor1:wait;
+	width:auto;
+	height:16px;
+	padding:12px 5px 10px 30px;
+	background:#fff url('/static/images/pagination_loading.gif') no-repeat scroll 5px 10px;
+	border:2px solid #6593CF;
+	color:#222;
+	display:none;
+}
+
+a span.dialog-btn-left{
+	background: url("/static/images/button_span_bg.gif") no-repeat scroll left top transparent;
+    display: inline-block;
+    height: 16px;
+    line-height: 16px;
+    padding: 4px 0 4px 18px; 
+}
+
+a.l-btn {
+    background: url("/static/images/button_a_bg.gif") no-repeat scroll right top transparent;
+    color: #444444;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    height: 24px;
+    outline: medium none;
+    padding-right: 18px;
+    text-decoration: none; 
+} 
+
+/* .cs2c_dialog_close_btn{
+background: url("/static/images/panel_tools.gif") no-repeat scroll -16px 0 transparent;
+} */
+
+.cs2c_wizard_dialog_banner{
+	position: relative;
+	top:0px;
+	left:0px;
+	height:20px;
+	background: none repeat scroll 0 0 #FAFAFA;
+	padding: 10px;
+}
+.cs2c_wizard_dialog_banner_span{
+	margin: 10px;
+}
+.redText{
+	color: red;
+}
+.cs2c_wizard_dialog_ctx{
+	padding:10px;
+}
+.cs2c_show_tab{
+	color: blue;
+}
+.cs2c_tab{
+}
+.cs2c_tab_btn{
+	-moz-border-radius: 5px 5px 0 0;
+    background: url("/static/images/tabs_enabled.png") repeat-x scroll left top transparent;
+    color: #416AA3;
+    display: inline-block;
+    height: 25px;
+    line-height: 25px;
+    margin: 0 5px 0 0;
+    padding: 0 10px;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+   border-left: 1px solid #99BBE8;
+   border-top: 1px solid #99BBE8;
+   border-right: 1px solid #99BBE8;
+}
+.cs2c_tab_title{
+	border-bottom: 1px solid #8DB2E3;
+    font-size: 12px;
+    height: 26px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0 0 0 4px;
+}
+.cs2c_tab_btn:hover{
+	background: url("/static/images/tabs_active.png") repeat-x scroll left bottom transparent;
+}
+.cs2c_tabs_selected{
+	background: url("/static/images/tabs_active.png") repeat-x scroll left bottom #7EABCD;
+    color: #416AA3;
+    border-color: #8DB2E3 #8DB2E3 #FFFFFF;
+    border-style: solid;
+    border-width: 1px;
+}
+.cs2c_tab_ctx{
+    border-color: #99BBE8;
+    border-right: 1px solid #99BBE8;
+    border-style: solid;
+    border-width: 0 1px 1px;
+    overflow: auto;
+}
+

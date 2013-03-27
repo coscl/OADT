@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>OADT</title>
+<link type="text/css" rel="stylesheet" href="/static/css/oadt.css">
+<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}css/icon.css">
+<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}css/table_view.css'>
+<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}css/cs2c_dialog.css">
+
+<script src='{{STATIC_URL}}js/common/0_jquery-1.8.2.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/csrf_token_jquery_resolve.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/1_underscore-1.4.2.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/3_backbone-0.9.2.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/4_laconic.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/common.js' type='text/javascript'></script>
+
+
+<script src='{{STATIC_URL}}js/common/pagerView.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/searchbox.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/validatebox.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/backbone_ui.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/datagridView.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/ManageView.js' type='text/javascript'></script>
+<script src='{{STATIC_URL}}js/common/cs2c_dialog.js' type='text/javascript'></script>
+
+<script src='{{STATIC_URL}}js/oadt_view.js' type='text/javascript'></script>
+
+
+
+</head>
+<body>
+<div class="top"></div>
+<div class="container">
+
+<div class="content">
+<div>
+OADT > 安装部署Openstack
+</div>
+<table class="table1">
+<tr >
+<td width="5%"></td>
+<td width="20%">OS的选择</td>
+<td>
+<select>
+<option>中标麒麟高级服务器</option>
+</select>
+</td>
+</tr>
+</table>
+</div>
+
+<div class="content">
+<table class="table1">
+<tr >
+<td width="5%" rowspan="4"></td>
+<td width="20%" rowspan="4" align="top">Cobbler的配置</td>
+<td width="20%">安装系统镜像：</td>
+<td>
+<input type="file"></input>
+</td>
+</tr>
+
+<tr>
+<td colspan="3">挂载安装镜像至/mnt，可以是iso或cd，用户可以通过浏览来选择iso或cd路径
+</td>
+</tr>
+
+<tr>
+<td width="20%">配置dhcp服务器：</td>
+<td width="30%">
+<input></input>
+</td>
+<td>
+<input  id="dhcpConfig" type="button" value="设置"></input>
+</td>
+</tr>
+
+<tr>
+<td width="20%"></td>
+<td colspan="2">
+<button>提交</button>
+<br>
+因为配置过程需要拷贝OS镜像内容，会比较慢，需要几分钟
+</td>
+</tr>
+</table>
+</div>
+
+<div class="content">
+<table class="table1">
+<tr>
+<td width="5%" rowspan="4"></td>
+<td width="20%" rowspan="4">添加节点</td>
+<td width="20%">单个节点添加：</td>
+<td>
+<p><input id="add_hostname" type="text" name="hostname" value="请输入Hostname"></p>
+<p><input id="add_host_ip" type="text" name="static_ip" value="请输入Host IP"></p>
+<p><input id="add_host_mac" type="text" name="hwaddr" value="请输入MAC地址"></p>
+<input id="add_host" type="submit" name="add" value="添加"/> 
+</td>
+</tr>
+
+<tr>
+<td  colspan="3">添加的节点会在下方显示区进行显示,用户可以手动添加或批量导入</td>
+</tr>
+
+<tr >
+<td width="20%">批量节点添加：</td>
+<td>
+<button>导入</button>
+</td>
+</tr>
+</table>
+<div id="cs2c_datagrid"></div>
+</div>
+</div>
+
+<div id="dhcp_dialog" style="display:none;">
+<table style="margin: 20px;">
+<tr><td>Subnet</td><td><input type="text" value="子网入口地址"></td></tr>
+<tr><td>Subnet_Netmask</td><td><input type="text" value="子网掩码入口地址"></td></tr>
+<tr><td>Sange_IP_Start</td><td><input type="text" value="分配IP起始地址"></td></tr>
+<tr><td>Range_IP_Stop</td><td><input type="text" value="分配IP结束地址"></td></tr>
+<tr><td>Gateway</td><td><input type="text" value="网管"></td></tr>
+<tr><td>Netmask</td><td><input type="text" value="子网掩码"></td></tr>
+<tr><td>Dns</td><td><input type="text" value=""></td></tr>
+
+</table>
+</div>
+
+<div id="role_dialog" style="display:none;padding:20px;">
+<input type="hidden" id="edit_role_hostname"/>
+</div>
+
+<form>{% csrf_token %}</form>
+
+</body>
+</html>
