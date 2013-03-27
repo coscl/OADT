@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from celery.task import task
 from celery.task.sets import subtask
-import logging
+import logging,commands
 from subprocess import Popen,PIPE
 import time
 
@@ -80,10 +80,9 @@ def deploytask(iso_addr):
 	f.write('0')
 	f.close()
 	logger.info("sudo sh /opt/openstack/scripts/deploy.sh %s" % iso_addr)
-	p = run_cmd("sudo sh /opt/openstack/scripts/deploy.sh %s" % iso_addr)
-	logger.info(p.communicate()[0])
-	print "p.returncode" + str(p.returncode)
-	if p.returncode != 0:		
+	p = commands.getstatusoutput("sh /opt/openstack/scripts/deploy.sh %s" % iso_addr)
+	logger.info(p[1])
+	if p[0]!=0:		
 		f = open(DEPLOY_RESULT_PATH,'w')
 		f.write('2')
 		f.close()
