@@ -122,6 +122,8 @@ window.onload = function() {
 						}, function(data) {
 							$('#os_right').show();
 							that.block2mask.isMask(false);
+						}).error(function(){
+							oadtView.alert('服务器错误，请查看日志。');
 						});
 					}
 				},
@@ -209,6 +211,8 @@ window.onload = function() {
 				openBatchImportDialog:function(){
 					$.get('hosttemplate', function(files) {
 						$('#batch_import_edit_dialog').find('textarea').text(files);
+					}).error(function(){
+						oadtView.alert('服务器错误，请查看日志。');
 					});
 					this._batchEditDialog.openDialog();
 				},
@@ -234,6 +238,8 @@ window.onload = function() {
 						batch_file_dir : filepath
 					}, function(data) {
 						oadtView.alert('导入成功。');
+					}).error(function(){
+						oadtView.alert('服务器错误，请查看日志。');
 					});
 				},
 				
@@ -323,6 +329,10 @@ window.onload = function() {
 					if (this.validatebox0.inputValidate()
 							&& this.validatebox1.inputValidate()
 							&& this.validatebox2.inputValidate()) {
+						if(!this.validateIpRange($('#ip_start').val().trim(),$('#ip_stop').val().trim(),$('#add_host_ip').val().trim())){
+							oadtView.alert("添加的主机IP地址不在DHCP范围之内。");
+							return;
+						}
 						// 提交添加的主机
 						$.post('host/add', {
 							'status' : 'added',
@@ -605,7 +615,8 @@ window.onload = function() {
 											roles : roleJson.length === 0 ? ''
 													: roleJson[0].pk,
 											timestamp : rowData
-													.get("timestamp").timestamp
+													.get("timestamp")==null?'':rowData
+															.get("timestamp").timestamp
 										};
 										var operate = [];
 										operate.push(createOption1(
@@ -687,6 +698,7 @@ window.onload = function() {
 							id : 'ok',
 							text : '确定'
 						}],
+						width:300,
 						closable : false,
 						modal : true
 					}).render();
@@ -834,13 +846,15 @@ window.onload = function() {
 										});
 									}
 
+									}).error(function(){
+										oadtView.alert('服务器错误，请查看日志。');
 									});
 					$('#role_dialog').show();
 					$('#role_dialog').append(
 							'<input id="edit_role_hostname" type="hidden" value="'
 									+ thisData.pk + '"/>');
 
-					
+					//角色对话框的弹出位置
 					if((document.documentElement.clientHeight-y)<176){
 						y = document.documentElement.clientHeight-180;
 					}else{
@@ -881,6 +895,8 @@ window.onload = function() {
 								}, function(data) {
 									that._configHostDialog.closeDialog();
 									oadtView.alert('配置成功。');
+								}).error(function(){
+									oadtView.alert('服务器错误，请查看日志。');
 								});
 					};
 				},
@@ -896,6 +912,8 @@ window.onload = function() {
 						$.get('host/' + data.pk + '/config', function(data) {
 							$('#config_host_dialog').find('textarea')
 									.text(data);
+						}).error(function(){
+							oadtView.alert('服务器错误，请查看日志。');
 						});
 						this._configHostDialog.openDialog();
 					} else {
@@ -928,6 +946,8 @@ window.onload = function() {
 							function(data) {
 							that._batchEditDialog.closeDialog();
 							oadtView.alert('编辑文件成功。');
+						}).error(function(){
+							oadtView.alert('服务器错误，请查看日志。');
 						});
 					};
 					
@@ -984,6 +1004,8 @@ window.onload = function() {
 							that._hostTable.tableView.refreshDataGrid();
 							oadtView.alert("删除成功。");
 						}
+					}).error(function(data){
+						oadtView.alert("删除失败，无法链接或服务器错误，请查看日志。");
 					});
 				},
 
@@ -1026,10 +1048,13 @@ window.onload = function() {
 					}).error(function(data) {
 					});
 					
+					//对不同尺寸的屏幕进行响应
 					if(document.documentElement.clientWidth>1024){
 						$('#table-position').offset({left:350});
+						$('.cobbler').css({margin:'0 0 0 41px'});
 					}else{
 						$('#table-position').offset({left:200});
+						$('.cobbler').css({margin:'0 0 0 87px'});
 					}
 					
 					$(window).resize(function() {
@@ -1040,7 +1065,8 @@ window.onload = function() {
 							$('#table-position').offset({left:200});
 							$('.cobbler').css({margin:'0 0 0 87px'});
 						}
-						
+						that.block2mask.calMask();
+						that.block3mask.calMask();
 					});
 
 				},
@@ -1054,11 +1080,31 @@ window.onload = function() {
 					this._alertDialog.openDialog();
 					$('#alert_dialog').html(msg);
 				},
+				
+				
 				/**
 				 * *******************************************************************************
 				 * 以下为工具方法集合
 				 * *******************************************************************************
 				 */
+				validateIpRange:function(startIP,endIP,hostIP){
+					if(this.ip2number(startIP)<=this.ip2number(hostIP)&&this.ip2number(hostIP)<=this.ip2number(endIP)){
+						return true;
+					}
+					return false;
+				},
+				
+				
+				ip2number:function(ip){
+					var tokens = ip.split('.');
+			        var numval = 0
+			        for (num in tokens) {
+			            numval = (numval << 8) + parseInt(tokens[num]);
+			        }
+			        return numval
+				},
+				
+				
 				readUploadFile : function(fileBrowser) {
 					if (navigator.userAgent.indexOf("MSIE") != -1) {
 						return this.readFileIE(fileBrowser);
@@ -1124,6 +1170,7 @@ window.onload = function() {
 			});
 
 	oadtView = new OADT_View();
+	
 
 };
 

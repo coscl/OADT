@@ -60,11 +60,13 @@ mkdir -p /var/log/OADT
 mkdir -p /var/log/OADT/nodes
 python $DIR/httpd/oadt/manage.py syncdb
 hostname=`hostname`
-echo "127.0.0.1 $hostname" > /etc/hosts
+echo "127.0.0.1 $hostname localhost" > /etc/hosts
 service rabbitmq-server start
 chkconfig rabbitmq-server on
-python $DIR/httpd/oadt/manage.py  celeryd -l info -f /var/log/OADT/oadtdeploy.log &
-echo "python $DIR/httpd/oadt/manage.py  celeryd -l info -f /var/log/OADT/oadtdeploy.log &" >> /etc/rc.local
+cp -rf $DIR/httpd/celery/celeryd /etc/init.d/
+cp -rf $DIR/httpd/celery/celeryd.sysconfig2 /etc/sysconfig/celeryd
+service celeryd start
+echo "service celeryd start" >> /etc/rc.local
 python $DIR/httpd/oadt/manage.py runserver 0.0.0.0:8000 &
 echo "python $DIR/httpd/oadt/manage.py runserver 0.0.0.0:8000 &" >> /etc/rc.local
 ### End ###
@@ -105,6 +107,7 @@ sed -i "s/^Listen.*/Listen 7112/g" /etc/httpd/conf/httpd.conf
 sed -i "s/http_port:.*/http_port: 7112/g" /etc/cobbler/settings
 service iptables stop >/dev/null 2>&1
 setenforce 0 >/dev/null 2>&1
+service cobblerd restart
 service httpd restart
 if [ $? -ne 0 ];then
         echo

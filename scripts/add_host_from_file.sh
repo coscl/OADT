@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "Start to add hosts" >>/var/log/OADT/oadtdeploy.log
 
 file_path=$1
 
@@ -12,6 +13,8 @@ cobbler_server_name=`hostname`
 gateway=`sed -n '/gateway_ip/p' "$CONFIG"/os_deploy.conf | awk '{print $2}'`
 netmask=`sed -n '/netmask_ip/p' "$CONFIG"/os_deploy.conf | awk '{print $2}'`
 dns=`sed -n '/dns_ip/p' "$CONFIG"/os_deploy.conf | awk '{print $2}'`
+
+
 
 if [ ! -f $file_path ];then
     echo "file does not exist,so exit"
@@ -32,6 +35,12 @@ do
     if [ "$mac_addr" == "" ] || [ "$ip_addr" == "" ] || [ "$hostname" == "" ];then
         echo "you must fill in host.template in right format, now exit"
         exit
+    fi
+    
+    sqlite3 /opt/openstack/httpd/oadt/hosts.db 'insert into hosts_host values ("'$hostname'","'$ip_addr'",CURRENT_TIMESTAMP,"added","'$mac_addr'")';
+
+    if [ $? -ne 0 ];then
+        continue
     fi
 
     sed -i "/$ip_addr/d" /etc/hosts
@@ -60,7 +69,9 @@ do
 
     touch /var/log/OADT/"$hostname".log
 
-done  < $CONFIG/host.template
+done  < $DIR/upload/hosts/host.template
 
 
-cobbler sync
+cobbler sync >> /var/log/OADT/oadtdeploy.log
+
+echo "add hosts  end" >>/var/log/OADT/oadtdeploy.log

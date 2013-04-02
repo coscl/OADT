@@ -139,17 +139,22 @@
 		calMask : function() {
 			// 遮罩等待字样居中显示
 			var parent = this.options.isAllMask ? $(document) : $('#'
-					+ parentEl_id);
+					+ this.options.parentEl_id);
 			var mask = $(this.el);
-			var msg = $(this.el).next();
 			mask.css({
 				height : parent.height(),
 				width : parent.width()
+				//zIndex : zIndex++
 			});
-			msg.css({
-				left : (parent.width() - msg.outerWidth()) / 2,
-				top : (parent.height() - msg.outerHeight()) / 2
-			});
+			// 如果需要显示加载字样
+			if (this.options.isLoading) {
+				var msg = $(this.el).next();
+				msg.css({
+					left : (parent.width() - msg.outerWidth()) / 2,
+					top : (parent.height() - msg.outerHeight()) / 2
+					//zIndex : zIndex++
+				});
+			}
 		},
 
 		/**

@@ -4,6 +4,8 @@ ip_addr=$1
 mac_addr=$2
 hostname=$3
 
+echo "start to add host $hostname" >>/var/log/OADT/oadtdeploy.log
+
 DIR="/opt/openstack"
 CONFIG="$DIR/config"
 OS_TYPE=`sed -n '/OS_TYPE/p' "$CONFIG"/os_type.conf | awk '{print $2}'`
@@ -40,6 +42,9 @@ cobbler sync
 mkdir -p /etc/puppet/files/$OS_TYPE/$hostname
 rm -rf /etc/puppet/files/$OS_TYPE/$hostname/*
 cp /etc/puppet/files/$OS_TYPE/local.conf /etc/puppet/files/$OS_TYPE/$hostname/
+sed -i "s/SERVER_YUM_IP.*/SERVER_YUM_IP $cobbler_server_ip/g" /etc/puppet/files/$OS_TYPE/$hostname/local.conf
+
 
 touch /var/log/OADT/nodes/"$hostname".log
 
+echo "add host $hostname end" >>/var/log/OADT/oadtdeploy.log

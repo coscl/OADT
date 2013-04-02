@@ -47,12 +47,12 @@ chkconfig puppetmaster on
 
 
 ### Start to configure Cobbler Server ###
-service vsftpd restart
+service vsftpd restart >>/var/log/OADT/oadtdeploy.log
 if [ $? -ne 0 ];then
     echo "ftp start error" >>/var/log/OADT/oadtdeploy.log
     exit -1
 fi
-service cobblerd restart
+service cobblerd restart >>/var/log/OADT/oadtdeploy.log
 if [ $? -ne 0 ];then
     echo "cobblerd start error" >>/var/log/OADT/oadtdeploy.log
     echo 
@@ -88,7 +88,7 @@ if [ $? -ne 0 ];then
 fi
 ### End ###
 
-mount | grep "/mnt"
+mount | grep "/mnt" >>/var/log/OADT/oadtdeploy.log
 if [ $? -ne 0 ];then
     echo "please mount your ISO or CD to /mnt" >>/var/log/OADT/oadtdeploy.log
     exit -1
@@ -97,7 +97,7 @@ fi
 ### create distro ###
 cobbler distro remove --name=openstack_"$OS_TYPE"-x86_64 >/dev/null 2>&1
 rm -rf  /var/www/cobbler/ks_mirror/openstack_rhel-x86_64/ >/dev/null 2>&1
-cobbler import --path=/mnt --name=openstack_"$OS_TYPE" --arch=x86_64 >> cobbler_openstack.log 2>&1
+cobbler import --path=/mnt --name=openstack_"$OS_TYPE" --arch=x86_64 >>/var/log/OADT/oadtdeploy.log 2>&1
 if [ $? -ne 0 ];then
     echo "create distro error" >>/var/log/OADT/oadtdeploy.log
     exit -1
@@ -111,7 +111,7 @@ sed -i "s/(@_@)/$cobbler_server_name/g" /var/www/$ks
 sed -i "s/(@-@)/$cobbler_server_ip/g" /var/www/$ks
 
 ### create profile ###
-cobbler profile edit --name=openstack_"$OS_TYPE"-x86_64 --distro=openstack_"$OS_TYPE"-x86_64 --kickstart=/var/www/$ks >> cobbler_openstack.log 2>&1
+cobbler profile edit --name=openstack_"$OS_TYPE"-x86_64 --distro=openstack_"$OS_TYPE"-x86_64 --kickstart=/var/www/$ks >> /var/log/OADT/oadtdeploy.log 2>&1
 if [ $? -ne 0 ];then
     echo "create profile error" >>/var/log/OADT/oadtdeploy.log
     exit -1
@@ -120,23 +120,24 @@ fi
 sed -i "/$cobbler_server_ip/d" /etc/hosts
 sed -i "/$cobbler_server_name/d" /etc/hosts
 echo "$cobbler_server_ip  $cobbler_server_name" >> /etc/hosts
+echo "127.0.0.1 localhost" >> /etc/hosts
 
 
-service cobblerd restart
+service cobblerd restart >>/var/log/OADT/oadtdeploy.log
 if [ $? -ne 0 ]
 then
     echo "cobbler start error , please check it" >>/var/log/OADT/oadtdeploy.log
     exit -1
 fi
 
-service xinetd restart
+service xinetd restart >>/var/log/OADT/oadtdeploy.log
 cobbler sync >> cobbler.log 2>&1
 if [ $? -ne 0 ];then
     echo "cobbler sync error." >>/var/log/OADT/oadtdeploy.log
     exit -1
 fi
 
-service ntpd start
+service ntpd start >>/var/log/OADT/oadtdeploy.log
 chkconfig ntpd on
 
 echo "server configure successfully" >>/var/log/OADT/oadtdeploy.log

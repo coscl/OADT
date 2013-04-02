@@ -156,7 +156,7 @@ def batch_add(request):
 		#response.write('True')
 		logger.info("sudo sh /opt/openstack/scripts/add_host_from_file.sh %s" % HOST_TEMPLATE_DIR)
 		p = commands.getstatusoutput("sh /opt/openstack/scripts/add_host_from_file.sh %s" % HOST_TEMPLATE_DIR)
-		logger.info(str(p[0])+p[1])
+		logger.info("result: "+ str(p[0])+p[1])
 		if p[0]!=0:
 			response.status_code = 500
 			ret = "执行 /opt/openstack/scripts/add_host_from_file.sh 失败，请查看日志!"
@@ -168,12 +168,13 @@ def delete(request,hostname):
 	if request.method == 'POST':
 		post = request.POST
 		logger.info("To delete the host %s." % hostname)
+		logger.error("test")
 		#host = Host.objects.get(pk=hostname)
 		host = get_object_or_404(Host,pk=hostname)
-		host.delete()		
-		logger.info("Host has been deleted.")
 		delete_host.delay(host)
-		logger.info("run delete_host  %s" % hostname)	
+		logger.info("run delete_host  %s" % hostname)
+		host.delete()		
+		logger.info("Host has been deleted.")	
 		ret = True
 	response = HttpResponse()
 	response.write(ret)
@@ -369,50 +370,3 @@ def cdpoint(request):
 		print json
 	p.close()
 	return HttpResponse(json,mimetype="aplication/json")	
-		
-def host(request):
-	HostFormSet = modelformset_factory(Host)
-	if request.method == 'POST':
-		post = request.POST
-		
-		if 'add' in post:
-			logger.info("To add the host.")
-			host = Host.objects.filter(Q(hostname=post['hostname'])|Q(static_ip=post['static_ip']))
-			if len(host) > 0 :
-				raise Exception('already has this host.')
-				logger.error("already has this host.")
-			else:
-				try:
-					form = HostForm(request.POST)
-					if form.is_valid():				
-						form.save()
-						logger.info("Hosts has been added.")	
-						new_host = HostForm()		
-				except  Exception,ex:
-					print Exception,":",ex
-					logger.error("error")
-	
-		if 'delete' in post:
-			try:
-				logger.info("To delete the certain host in table.")
-				host = Host.objects.get(hostname=post['hostname'])
-				host.delete()
-			except Host.DoesNotExist:
-				logger.warning("Hostname doesnot exists.")    
-			form = HostForm()
-            #if post['hostname']:
-            #    puppet_clean.delay(post['hostname'])
-            #    logger.info("trigger puppetca clean %s" % post['hostname'])          
-		
-		if 'config' in post:
-			logger.info("config the certain host in table.")
-			
-		if 'deploy' in post:
-			logger.info("deploy the certain host in table.")	
-	else:
-		new_host = HostForm()
-	
-	# bind objects to table	
-	hostform = HostFormSet(queryset=Host.objects.all())
-	host_list = Host.objects.all()
-	return render_to_response('hosts/index.html',locals(),RequestContext(request))

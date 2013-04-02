@@ -30,7 +30,7 @@ var DatagridView=Backbone.View.extend({
 		
 		this.refreshDataGrid();
 		//定时刷新表格数据
-//		this.timerRefeshTable();
+		this.timerRefeshTable();
 	},
 	
 	events:{

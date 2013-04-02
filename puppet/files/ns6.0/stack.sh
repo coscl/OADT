@@ -96,6 +96,10 @@ if [ "$NODE_TYPE" == "cc" ];then
     if [ $MY_HOST_IP == $KEYSTONE_HOST_IP ];then
 
         mysql -uroot -p$ROOT_MYSQL_PASSWORD <<EOF
+            DROP DATABASE keystone;
+EOF
+        sleep 2
+        mysql -uroot -p$ROOT_MYSQL_PASSWORD <<EOF
             CREATE DATABASE keystone;
             GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'keystone';
             GRANT ALL ON keystone.* TO 'keystone'@'$MY_HOST_NAME' IDENTIFIED BY 'keystone';
@@ -127,7 +131,8 @@ EOF
         sed -i.bak "s/192.168.206.130:9292/$GLANCE_HOST_IP:9292/g" $DEPLOY_DIR/config.yaml
 
         sed -i.bak "s/token:.*/token:    $ADMIN_TOKEN/g" $DEPLOY_DIR/config.yaml
-
+        service openstack-keystone restart
+        sleep 10
         python $DEPLOY_DIR/keystone-init.py $DEPLOY_DIR/config.yaml
 
         if [ $? -ne 0 ];then

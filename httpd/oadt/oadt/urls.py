@@ -16,7 +16,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^index/$','hosts.views.index'),
     url(r'^index/hosts/$','hosts.views.hosts'),
-    url(r'^host/$','hosts.views.host'),
     url(r'^index/host/add','hosts.views.add'),
     url(r'^index/host/(?P<hostname>\w+)/delete$','hosts.views.delete'),
     url(r'^index/host/(?P<hostname>\w+)/log$','hosts.views.hostlog'),

@@ -62,11 +62,16 @@ $(function() {
 			$('#' + this.options.id + '').next().hide();
 		},
 		cssPosition : function() {
-			var a = $('#' + this.options.id + '');
-			var p_y = $('#' + this.options.id + '').offset().top;
-			var p_x = $('#' + this.options.id + '').offset().left
-					+ $('#' + this.options.id + '').width() + 5;
-			$('#' + this.options.id + '').next().css({
+			
+			var p_y = $('#' + this.options.id + '').position().top;
+			var p_x = $('#' + this.options.id + '').position().left
+			+ $('#' + this.options.id + '').width() + 5;
+//			$('#' + this.options.id + '').next().css({
+//				position:relative,
+//				left : p_x,
+//				top : p_y
+//			});
+			$('#' + this.options.id + '').next().position({
 				left : p_x,
 				top : p_y
 			});

@@ -101,7 +101,7 @@
         <input type="file" name="file" id="selectfiledialog" class="botton"/> -->
 									&nbsp;&nbsp;&nbsp; <input id="selectFile" class="botton"
 										type="button" value="选择" />
-									<p>挂载安装镜像至/mnt，可以是iso或cd，用户可以通过浏览来选择iso或cd路径。</p>
+									<p>请选择iso文件或安装光盘。</p>
 								</div>
 
 								<div>
@@ -145,10 +145,10 @@
 								<div class="node">
 									<div>
 										单个节点添加：&nbsp;&nbsp;&nbsp; <input id="add_hostname"
-											class="node_put" type="text" value="主机名称" size="15" />&nbsp;
+											class="node_put" type="text" value="主机名称"  size="15" required/>&nbsp;
 										<input id="add_host_ip" class="node_put1" type="text"
-											value="主机IP" size="15" />&nbsp; <input id="add_host_mac"
-											class="node_put2" type="text" value="MAC地址" size="15" />&nbsp;
+											value="主机IP" size="15" required/>&nbsp; <input id="add_host_mac"
+											class="node_put2" type="text" value="MAC地址" size="15" required/>&nbsp;
 										<input id="add_host" class="botton" type="button" value="添加" />
 
 										<p>添加的节点会在下方显示区进行显示，用户可以手动添加或批量导入。</p>
@@ -190,31 +190,31 @@
 		<table style="margin: 20px;">
 			<tr>
 				<td>Subnet</td>
-				<td><input id="subnet" type="text" value="子网入口地址" /></td>
+				<td><input id="subnet" type="text" value="子网入口地址" required/></td>
 			</tr>
 			<tr>
 				<td>Subnet_Netmask</td>
-				<td><input id="subnet_netmask" type="text" value="子网掩码入口地址" /></td>
+				<td><input id="subnet_netmask" type="text" value="子网掩码入口地址" required/></td>
 			</tr>
 			<tr>
 				<td>Sange_IP_Start</td>
-				<td><input id="ip_start" type="text" value="分配IP起始地址" /></td>
+				<td><input id="ip_start" type="text" value="分配IP起始地址" required/></td>
 			</tr>
 			<tr>
 				<td>Range_IP_Stop</td>
-				<td><input id="ip_stop" type="text" value="分配IP结束地址" /></td>
+				<td><input id="ip_stop" type="text" value="分配IP结束地址" required/></td>
 			</tr>
 			<tr>
 				<td>Gateway</td>
-				<td><input id="gateway" type="text" value="网关" /></td>
+				<td><input id="gateway" type="text" value="网关" required/></td>
 			</tr>
 			<tr>
 				<td>Netmask</td>
-				<td><input id="netmask" type="text" value="子网掩码" /></td>
+				<td><input id="netmask" type="text" value="子网掩码" required/></td>
 			</tr>
 			<tr>
 				<td>Dns</td>
-				<td><input id="dns" type="text" value="" /></td>
+				<td><input id="dns" type="text" value="" required/></td>
 			</tr>
 
 		</table>

@@ -1,0 +1,4 @@
+
+cp celeryd /etc/init.d/
+cp celeryd.sysconfig2 /etc/sysconfig/celeryd
+service celeryd start
