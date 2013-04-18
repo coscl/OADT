@@ -42,6 +42,8 @@ window.onload = function() {
 				_dhcpDialog : null,
 				_deployTimeSpan : null,
 				_deployHost:null,
+				_oldSelect:0,
+				_selectRadio:null,
 				/**
 				 * 初始化时渲染整个界面
 				 */
@@ -105,13 +107,34 @@ window.onload = function() {
 					
 					var select_os = e.currentTarget;
 					var that = this;
-					if (select_os.selectedIndex === 0) {
-						
+					
+					//如果下拉框没有改变之前，该状态为尚未选择人任何操作系统
+					if(this._oldSelect!=0){
 						var result = confirm("你确定要更换操作系统类型吗（如果更换操作系统类型，当前操作系统配置将会被重置）？");
 						if (!result) {
-							select_os.selectedIndex = 1;
+							select_os.selectedIndex = this._oldSelect;
 							return;
+						}else{
+							this._oldSelect = select_os.selectedIndex;
+							/**
+							 * *************清空该操作系统的所有配置以及数据2013-4-2*********************************
+							 */
+							this.block3LoadingMask.isMask(true);
+							$.post('cleanall', function(data) {
+								oadtView._hostTable.tableView
+								.refreshDataGrid();
+								$.post('ostype', {
+									OS_TYPE : ''
+								}, function(data) {
+									that.block3LoadingMask.isMask(false);
+								});
+							}).error(function(){
+								oadtView.alert('清空数据失败，请查看日志。');
+							});
 						}
+					}
+					this._oldSelect = select_os.selectedIndex;
+					if (select_os.selectedIndex === 0) {
 						$('#os_right').hide();
 						$('#dhcp_right').hide();
 						this.block2mask.isMask(true);
@@ -155,7 +178,8 @@ window.onload = function() {
 						if (files != '') {
 							_.each(files, function(file) {
 								$('#ISO').append(
-										'<p><input type="radio" name="path"/>'
+										'<p><input type="radio" name="path" '
+										+(that._selectRadio==null||that._selectRadio!=file?'':' checked="checked"')+'/>'
 												+ file + '</p>');
 							});
 						}
@@ -166,7 +190,8 @@ window.onload = function() {
 					});
 					$.get('cdpoint',function(files) {
 						if (files != '') {
-							$('#CD').append('<p><input type="radio" name="path" value="'+files.slice(0,files.indexOf(' '))+'"/>'+ 
+							$('#CD').append('<p><input type="radio" name="path" value="'+files.slice(0,files.indexOf(' '))
+									+(that._selectRadio==null||that._selectRadio.indexOf('/dev/')<0?'':' checked="checked"')+'"/>'+ 
 									files.slice(files.indexOf(' ') + 1)+ '</p>');
 						}else{
 							$('#CD').append('<p>无CD。</p>');
@@ -311,7 +336,7 @@ window.onload = function() {
 						setTimeout(function(){
 							clearInterval(getShStatusTimer);
 							that.submitTipmask.isMask(false);
-						},(1000*60*15));
+						},(1000*60*30));
 						
 						
 					}
@@ -324,7 +349,7 @@ window.onload = function() {
 				 */
 				addHost : function() {
 					var dateStr = this.formatDateToString(new Date());
-
+					var that = this;
 					// 验证校验框中的数据格式的正确性
 					if (this.validatebox0.inputValidate()
 							&& this.validatebox1.inputValidate()
@@ -334,6 +359,7 @@ window.onload = function() {
 							return;
 						}
 						// 提交添加的主机
+						this.addhostmask.isMask(true);
 						$.post('host/add', {
 							'status' : 'added',
 							'hostname' : $('#add_hostname').val(),
@@ -350,8 +376,19 @@ window.onload = function() {
 										$('#add_host_ip').val('主机IP');
 										$('#add_host_mac').val('MAC地址');
 									}
+									that.addhostmask.isMask(false);
 								}).error(function(data){
-									oadtView.alert(data.responseText);
+									that.addhostmask.isMask(false);
+									if(data.responseText.indexOf('hostname')>0){
+										oadtView.alert('主机名【'+$('#add_hostname').val()+'】已经存在。');
+									}else if(data.responseText.indexOf('static_ip')>0){
+										oadtView.alert('主机IP【'+$('#add_host_ip').val()+'】已经存在。');
+									}else if(data.responseText.indexOf('hwaddr')>0){
+										oadtView.alert('主机MAC地址【'+ $('#add_host_mac').val()+'】已经存在。');
+									}else{
+										oadtView.alert(data.responseText);
+									}
+									
 								});
 					}
 
@@ -372,10 +409,12 @@ window.onload = function() {
 					$.get('ostype', function(data) {
 						if (data.length===1||data[1] === '') {
 							$('#os_type')[0].selectedIndex = 0;
+							that._oldSelect = 0;
 						} else {
 							$('#os_type')[0].selectedIndex = 1;
 							$('#os_right').show();
 							that.block2mask.isMask(false);
+							that._oldSelect = 1;
 						}
 					});
 				},
@@ -423,7 +462,15 @@ window.onload = function() {
 						closable : true,
 						modal : true
 					}).render();
+					
+					var that = this;
 					this._selectIsoDialog.okPressed = function() {
+						var radio = $('#select_iso_dialog input:checked');
+						if(radio.length===0){
+							oadtView.alert("请选择系统镜像。");
+							return;
+						}
+						that._selectRadio = radio[0].value!="on"?radio[0].value:radio[0].nextSibling.data;
 						this.closeDialog();
 					};
 				},
@@ -445,6 +492,12 @@ window.onload = function() {
 						parentEl_id : 'block3',
 						isLoading : false
 					}).render();
+					
+					this.block3LoadingMask = new CS2C_Shadow({
+						isAllMask : false,
+						parentEl_id : 'block3',
+						isLoading : true
+					}).render();
 
 					this.block2mask.isMask(true);
 					this.block3mask.isMask(true);
@@ -455,6 +508,12 @@ window.onload = function() {
 						isLoading : true
 					}).render();
 					$(this.submitTipmask.$el[0].nextSibling).html('配置过程需要拷贝OS镜像内容，大概需要十分钟,后台正在处理，请稍后...');
+					
+					this.addhostmask = new CS2C_Shadow({
+						isAllMask : true,
+						position_id : 'logo',
+						isLoading : true
+					}).render();
 					
 					this.isoInnerMask = new CS2C_Shadow({
 						isAllMask : false,
@@ -473,8 +532,8 @@ window.onload = function() {
 					this.validatebox0 = new validateBoxView(
 							{
 								'id' : 'add_hostname',
-								'tipmsg' : '请勿输入除英文字母（不区分大小写）、数字和下划线之外的字符，且必须以英文字母（不区分大小写）开头，字符个数不小于2且不大于20。',
-								'reg_exp' : /^[a-zA-Z][a-zA-Z0-9\_]{1,19}$/,
+								'tipmsg' : '请勿输入除英文字母（不区分大小写）、数字、点、下划线、减号之外的字符，且必须以英文字母（不区分大小写）开头，字符个数不小于2且不大于25。',
+								'reg_exp' : /^[a-zA-Z][a-zA-Z0-9\_\.\-]{1,24}$/,
 								'reqmsg' : '必填项'
 							});
 					this.validatebox1 = new validateBoxView(
@@ -682,6 +741,23 @@ window.onload = function() {
 							oadtView._dhcpDialog.closeDialog();
 						}
 					};
+					
+					this._dhcpDialog.cancelPressed = function() {
+						this.closeDialog();
+						$.get('dhcp', function(data) {
+							$('.cobbler_put1').val(
+									data.range_ip_start + ' - '
+											+ data.range_ip_stop);
+							$('#subnet').val(data.subnet_ip);
+							$('#subnet_netmask').val(data.subnet_netmask);
+							$('#ip_start').val(data.range_ip_start);
+							$('#ip_stop').val(data.range_ip_stop);
+							$('#gateway').val(data.gateway_ip);
+							$('#netmask').val(data.netmask_ip);
+							$('#dns').val(data.dns_ip);
+						}).error(function(data){
+						});
+					};
 					$('#dhcp_dialog').show();
 				},
 				
@@ -734,6 +810,12 @@ window.onload = function() {
 							&& this.vbox_gateway.inputValidate()
 							&& this.vbox_netmask.inputValidate()
 							&& this.vbox_dns.inputValidate()) {
+						
+						if(this.ip2number($('#ip_start').val().trim())>=this.ip2number($('#ip_stop').val().trim())){
+							this.alert("结束IP不能小于起始IP。");
+							return;
+						}
+						
 						// 界面上显示用户输入的开始和结束IP 地址
 						$('.cobbler_put1').val(
 								$('#ip_start').val() + " - "
@@ -950,6 +1032,10 @@ window.onload = function() {
 							oadtView.alert('服务器错误，请查看日志。');
 						});
 					};
+					this._batchEditDialog.cancelPressed = function(){
+						$('#batch_import_edit_dialog').find('textarea')[0].value = $('#batch_import_edit_dialog').find('textarea')[0].defaultValue;
+						this.closeDialog();
+					};
 					
 				},
 
@@ -976,7 +1062,7 @@ window.onload = function() {
 					}
 					if (data.status === 'installed'||data.status === 'deployed') {
 						$.post('host/' + data.pk + '/deploy', function(data) {
-							oadtView.alert('部署成功。');
+							oadtView.alert('系统已开始部署。');
 						}).error(function(data) {
 							if (typeof data === 'string') {
 								oadtView.alert(data);

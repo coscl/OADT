@@ -7,10 +7,12 @@ from subprocess import Popen,PIPE
 import time
 
 DEPLOY_RESULT_PATH = "/opt/openstack/config/deploy_result.conf"
+HOST_LOG_DIR = "/var/log/OADT/nodes/"
 
 logger = logging.getLogger(__name__)
 #run_cmd = lambda cmd: Popen(cmd,stdout=PIPE,stderr=PIPE,shell=True)
 run_cmd = lambda cmd: commands.getstatusoutput(cmd)
+
 @task(ignore_result=True)
 def puppet_run(host):
 	logger.info("puppetrun to client host %s" % host)
@@ -21,6 +23,9 @@ def puppet_run(host):
 		logger.error("script error:" + str(p[1]))
 	else:
 		logger.info("script result:" + str(p[1]))
+	f = open(HOST_LOG_DIR + host + '.log','a')
+	f.write(str(p[1]))
+	f.close()	
 	
 @task(ignore_result=True)
 def puppet_clean(host):
@@ -102,3 +107,8 @@ def deploytask(iso_addr):
 		f = open(DEPLOY_RESULT_PATH,'w')
 		f.write('2')
 		f.close()
+		
+#@task(ignore_result=True)
+#def test(mits):
+#	p = run_cmd("sleep %s" % mits)
+#	print p

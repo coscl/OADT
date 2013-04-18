@@ -105,7 +105,7 @@ fi
 
 ### configure kickstart file ###
 ks="ks.cfg"
-\cp -rf $CONFIG/$ks /var/www/
+\cp -rf $CONFIG/$OS_TYPE/$ks /var/www/
 sed -i "s/ftp:\/\/192\.168\.1\.1\/pub/http:\/\/$cobbler_server_ip:7112\/cobbler\/ks_mirror\/openstack_"$OS_TYPE"-x86_64/g" /var/www/$ks
 sed -i "s/(@_@)/$cobbler_server_name/g" /var/www/$ks
 sed -i "s/(@-@)/$cobbler_server_ip/g" /var/www/$ks
@@ -120,7 +120,7 @@ fi
 sed -i "/$cobbler_server_ip/d" /etc/hosts
 sed -i "/$cobbler_server_name/d" /etc/hosts
 echo "$cobbler_server_ip  $cobbler_server_name" >> /etc/hosts
-echo "127.0.0.1 localhost" >> /etc/hosts
+echo "127.0.0.1 $cobbler_server_name" >> /etc/hosts
 
 
 service cobblerd restart >>/var/log/OADT/oadtdeploy.log

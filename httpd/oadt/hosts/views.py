@@ -168,7 +168,6 @@ def delete(request,hostname):
 	if request.method == 'POST':
 		post = request.POST
 		logger.info("To delete the host %s." % hostname)
-		logger.error("test")
 		#host = Host.objects.get(pk=hostname)
 		host = get_object_or_404(Host,pk=hostname)
 		delete_host.delay(host)
@@ -180,6 +179,21 @@ def delete(request,hostname):
 	response.write(ret)
 	return response	
 	
+def cleanall(request):
+	if request.method == 'POST':
+		logger.info("clean all data!!")
+		for host in Host.objects.all():
+			logger.info("sh /opt/openstack/scripts/delete_host.sh %s %s" % (host.hostname , host.hwaddr))
+			p = commands.getstatusoutput("sh /opt/openstack/scripts/delete_host.sh %s %s" % (host.hostname , host.hwaddr))
+			logger.info("delete script result:"+str(p[1]))
+#			delete_host.delay(host)
+			host.delete()
+		f = open(DEPLOY_RESULT_PATH,'w')
+		f.write('0')
+		f.close()
+		logger.info("All data has been cleaned.")
+		return HttpResponse("True")	
+		
 def update(request,hostname):
 	host = get_object_or_404(Host,pk=hostname)
 	ret = False	
@@ -319,11 +333,9 @@ def deploy(request,hostname):
 		response.status_code = 500
 		response.write("请先设置 " + " ".join(r) + " 之后再进行此操作 !")	
 	else:
-		# write ccrole conf to CCROLE_CONF_PATH
-		ccroles = CCRole.objects.all()
-		for ccrole in ccroles:
-			host = ccrole.host
-			# write ccrole conf to CCROLE_CONF_PATH
+		# set ccrole conf	
+		host = get_object_or_404(Host,pk=hostname)
+		if len(host.ccrole_set.all())>0:
 			f1 = open(PUPPET_CONF_DIR+host.hostname+"/local.conf",'r')
 			lines = f1.readlines()
 			for line in lines:
@@ -333,9 +345,7 @@ def deploy(request,hostname):
 			f1 = open(PUPPET_CONF_DIR+host.hostname+"/local.conf",'w')	
 			f1.writelines(lines)
 			f1.close()
-		# write nc conf to CCROLE_CONF_PATH
-		nchosts = Host.objects.filter(ccrole__isnull=True)
-		for host in nchosts:
+		else:
 			f2 = open(PUPPET_CONF_DIR+host.hostname+"/local.conf",'r')
 			lines = f2.readlines()
 			for line in lines:
@@ -344,9 +354,7 @@ def deploy(request,hostname):
 			lines.insert(0,"NODE_TYPE nc\n")
 			f2 = open(PUPPET_CONF_DIR+host.hostname+"/local.conf",'w')	
 			f2.writelines(lines)	
-			f2.close()	
-		
-		host = get_object_or_404(Host,pk=hostname)
+			f2.close()
 		add_puppet_node.delay(host)	
 	return response	
 
@@ -370,3 +378,18 @@ def cdpoint(request):
 		print json
 	p.close()
 	return HttpResponse(json,mimetype="aplication/json")	
+
+def validate(request,hostattr,value):
+	print hostattr,value
+	count = 0
+	if hostattr=="hostname":
+		count = len(Host.objects.filter(hostname=value))
+	elif hostattr=="static_ip":
+		count = len(Host.objects.filter(static_ip=value))
+	elif hostattr=="hwaddr":
+		count = len(Host.objects.filter(hwaddr=value))
+	if count >0:
+		return HttpResponse("false")
+	else:
+		return HttpResponse("true")
+		

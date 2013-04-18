@@ -6,7 +6,7 @@ from datetime import datetime
 STATUS_CHOICE = (('added','added'),('installed','installed'),('deploying','deploying'),('deployed','deployed'))	
 	
 class Host(models.Model):
-    hostname = models.CharField(max_length=20,primary_key=True, blank=False)
+    hostname = models.CharField(max_length=25,primary_key=True, blank=False)
     static_ip = models.CharField(max_length=20,unique = True)
     timestamp = models.DateTimeField(default=datetime.now,blank=True)
     status = models.CharField(max_length=20,choices=STATUS_CHOICE,null=True)
