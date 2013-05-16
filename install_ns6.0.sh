@@ -60,8 +60,8 @@ mkdir -p /var/log/OADT
 mkdir -p /var/log/OADT/nodes
 python $DIR/httpd/oadt/manage.py syncdb
 hostname=`hostname`
-sed -i "/$hostname/d" /etc/hosts
-echo "127.0.0.1 $hostname" >> /etc/hosts
+#sed -i "/$hostname/d" /etc/hosts
+#echo "127.0.0.1 $hostname" >> /etc/hosts
 service rabbitmq-server start
 chkconfig rabbitmq-server on
 cp -rf $DIR/httpd/celery/celeryd /etc/init.d/

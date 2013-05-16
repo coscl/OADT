@@ -120,7 +120,7 @@ fi
 sed -i "/$cobbler_server_ip/d" /etc/hosts
 sed -i "/$cobbler_server_name/d" /etc/hosts
 echo "$cobbler_server_ip  $cobbler_server_name" >> /etc/hosts
-echo "127.0.0.1 $cobbler_server_name" >> /etc/hosts
+#echo "127.0.0.1 $cobbler_server_name" >> /etc/hosts
 
 
 service cobblerd restart >>/var/log/OADT/oadtdeploy.log

@@ -379,11 +379,11 @@ window.onload = function() {
 									that.addhostmask.isMask(false);
 								}).error(function(data){
 									that.addhostmask.isMask(false);
-									if(data.responseText.indexOf('hostname')>0){
+									if(data.responseText.indexOf('ost with this Hostname already exists.')>0){
 										oadtView.alert('主机名【'+$('#add_hostname').val()+'】已经存在。');
-									}else if(data.responseText.indexOf('static_ip')>0){
+									}else if(data.responseText.indexOf('Host with this Static ip already exists.')>0){
 										oadtView.alert('主机IP【'+$('#add_host_ip').val()+'】已经存在。');
-									}else if(data.responseText.indexOf('hwaddr')>0){
+									}else if(data.responseText.indexOf('Host with this Hwaddr already exists.')>0){
 										oadtView.alert('主机MAC地址【'+ $('#add_host_mac').val()+'】已经存在。');
 									}else{
 										oadtView.alert(data.responseText);
