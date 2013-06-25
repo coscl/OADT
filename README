@@ -1,0 +1,7 @@
+操作步骤：
+1 在server上创建/opt/openstack目录，将源码拷至该目录下
+2 将ns6.4光盘制作成本地yum源，有一些依赖包需要从光盘下载
+3 使用eth0网卡，若使用其他网卡，则需在install.py里面"ifconfig eth0 | grep \"inet addr:\" | cut -d: -f2 | awk '{print $1}'"eth0改为你使用的网卡名
+4 执行install.py
+5 成功安装完成后，手动执行python /opt/openstack/httpd/oadt/manage.py runserver 0.0.0.0:8000 (若提示8000端口被占用，则改为8001或8002...)
+6 打开浏览器，输入http://[your ip]:8000/index 进入管理界面进行操作

@@ -1,0 +1,15 @@
+deploy_os_type: 
+
+cobber_server:
+    ip: 0.0.0.0
+    hostname: test
+
+cobbler_dhcp:
+    subnet_ip: 0.0.0.0
+    subnet_netmask: 0.0.0.0
+    range_ip_start: 0.0.0.0
+    range_ip_stop: 0.0.0.0
+    netmask_ip: 0.0.0.0
+    gateway_ip: 0.0.0.0
+    dns_ip: 0.0.0.0
+    iso_addr: /dev/sr0

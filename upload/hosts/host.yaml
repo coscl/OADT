@@ -1,0 +1,12 @@
+# - name: node
+#   ip: 192.168.10.1
+#   mac: xx:xx:xx:xx:xx:xx
+
+host:
+ - name: 
+   ip: 
+   mac: 
+
+ - name: 
+   ip: 
+   mac: 

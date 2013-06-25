@@ -8,7 +8,7 @@ from hosts.forms import HostForm,ConfigForm
 from django.db.models import Q
 from django.utils import simplejson
 from django.http import HttpRequest,HttpResponse
-import logging,os,glob,sys,commands,time
+import logging,os,glob,sys,commands,time,yaml
 from django.core import serializers
 from hosts.tasks import add_one_host,puppet_clean,delete_host,add_host_from_file,add_puppet_node,deploytask
 from configs import dhcp_config
@@ -19,14 +19,15 @@ sys.setdefaultencoding("utf-8")
 
 logger = logging.getLogger(__name__)
 DEPLOY_CONF_PATH = "/opt/openstack/config/os_deploy.conf"
-HOST_LOG_DIR = "/var/log/OADT/nodes/"
+CONF_PATH = "/opt/openstack/config/cb.yaml"
+HOST_LOG_DIR = "/var/log/openstack/nodes/"
 HOST_CONFIG_DIR = "/etc/puppet/files/"
 OS_TYPE_PATH = '/opt/openstack/config/os_type.conf'
 ISO_DIR = '/opt/openstack/upload/iso/'
 HOST_TEMPLATE_DIR1 = '/opt/openstack/upload/template/'
-HOST_TEMPLATE_DIR = '/opt/openstack/upload/hosts/host.template'
-CCROLE_CONF_PATH = '/opt/openstack/config/openstack_deploy.conf'
-PUPPET_CONF_DIR = "/etc/puppet/files/ns6.0/"
+HOST_TEMPLATE_DIR = '/opt/openstack/upload/hosts/host.yaml'
+CCROLE_CONF_PATH = '/etc/puppet/files/role.yaml'
+PUPPET_CONF_DIR = "/etc/puppet/files/rhel6.4/"
 DEPLOY_RESULT_PATH = "/opt/openstack/config/deploy_result.conf"
 
 def index(request):
@@ -81,20 +82,25 @@ def roles(request,hostname):
 		else:
 			# write role conf to CCROLE_CONF_PATH
 			ccroles = CCRole.objects.all()
-			f = open(CCROLE_CONF_PATH,'w')
+			f = open(CCROLE_CONF_PATH,'r')
+			ya = yaml.load(f)
+			f.close()
 			for ccrole in ccroles:
 				host = ccrole.host
 				if(ccrole.name == 'Keystone'):
-					f.write('keystone_cc_ip '+host.static_ip +"\n")
+					ya['keystone'] = host.static_ip
 				elif(ccrole.name == 'Glance'):
-					f.write('glance_cc_ip '+host.static_ip+"\n")
+					ya['glance'] = host.static_ip
 				elif(ccrole.name == 'Nova'):
-					f.write('nova_cc_ip '+host.static_ip+"\n")			
+					ya['nova'] = host.static_ip
+			f = open(CCROLE_CONF_PATH,'w')
+			yaml.dump(ya,f,default_flow_style=False)
+			f.close()			
 	return HttpResponse(json,mimetype="aplication/json")
 	
 def add(request):
 	if request.method == 'POST':
-		post = request.POST
+#		post = request.POST
 		form = HostForm(request.POST)
 		logger.info("add the host ." )
 		ret = False
@@ -106,12 +112,16 @@ def add(request):
 				add_one_host.delay(h)
 				ret = True
 				logger.info("Host has been added.")	
-			except  Exception,ex:
-				print Exception,":",ex
+#			except  Exception,ex:
+#				print Exception,":",ex
+#				response.status_code = 500
+#				h.delete()
+#				logger.error("add host error!" + str(ex))
+#				ret = str(ex)
+			except  SystemExit:
 				response.status_code = 500
-				h.delete()
-				logger.error("add host error!" + str(ex))
-				ret = str(ex)
+				logger.error("add node error!")
+				ret = str("添加主机节点失败，请检查日志文件")
 		else:		
 			logger.info("host info not valided")
 			response.status_code = 500	
@@ -140,28 +150,13 @@ def hosttemplate(request):
 		f.close()
 	return response
 						
-def batch_add1(request):
-	response = HttpResponse()
-	if request.method == 'POST':
-		batch_file_dir = request.POST['batch_file_dir']
-		if batch_file_dir:
-			add_host_from_file.delay(batch_file_dir)
-			response.write('True')
-		return response	
-		
 def batch_add(request):
 	response = HttpResponse()
 	if request.method == 'POST':
-		#add_host_from_file.delay(HOST_TEMPLATE_DIR)
-		#response.write('True')
-		logger.info("sudo sh /opt/openstack/scripts/add_host_from_file.sh %s" % HOST_TEMPLATE_DIR)
-		p = commands.getstatusoutput("sh /opt/openstack/scripts/add_host_from_file.sh %s" % HOST_TEMPLATE_DIR)
-		logger.info("result: "+ str(p[0])+p[1])
-		if p[0]!=0:
-			response.status_code = 500
-			ret = "执行 /opt/openstack/scripts/add_host_from_file.sh 失败，请查看日志!"
-			response.write(ret)
-	return response			
+		add_host_from_file(HOST_TEMPLATE_DIR)
+		response.write('True')
+		return response
+					
 	
 def delete(request,hostname):
 	ret = False	
@@ -183,10 +178,10 @@ def cleanall(request):
 	if request.method == 'POST':
 		logger.info("clean all data!!")
 		for host in Host.objects.all():
-			logger.info("sh /opt/openstack/scripts/delete_host.sh %s %s" % (host.hostname , host.hwaddr))
-			p = commands.getstatusoutput("sh /opt/openstack/scripts/delete_host.sh %s %s" % (host.hostname , host.hwaddr))
-			logger.info("delete script result:"+str(p[1]))
-#			delete_host.delay(host)
+#			logger.info("sh /opt/openstack/scripts/delete_host.sh %s %s" % (host.hostname , host.hwaddr))
+#			p = commands.getstatusoutput("sh /opt/openstack/scripts/delete_host.sh %s %s" % (host.hostname , host.hwaddr))
+#			logger.info("delete script result:"+str(p[1]))
+			delete_host.delay(host)
 			host.delete()
 		f = open(DEPLOY_RESULT_PATH,'w')
 		f.write('0')
@@ -227,13 +222,13 @@ def config(request,hostname):
 	configs = ''
 	response = HttpResponse()
 	if request.method == "GET" and hostname:
-		f = open(HOST_CONFIG_DIR + "ns6.0/" + hostname + '/local.conf')
+		f = open(HOST_CONFIG_DIR + "rhel6.4/" + hostname + '/local.yaml')
 		configs = f.read()
 		f.close()
 		response.write(configs)
 	elif request.method == "POST" and hostname:
 		configs = request.POST['configs']
-		f = open(HOST_CONFIG_DIR + "ns6.0/" + hostname + '/local.conf','w')
+		f = open(HOST_CONFIG_DIR + "rhel6.4/" + hostname + '/local.yaml','w')
 		f.write(configs)
 		f.close()
 	return response
@@ -241,11 +236,11 @@ def config(request,hostname):
 def dhcp(request):
 	if request.method == 'GET':
 		#json = serializers.serialize('json', dhcp_config)
-		f = open(DEPLOY_CONF_PATH)
-		lines = f.readlines()
-		for line in lines:
-			temp = line.split()
-			dhcp_config[temp[0]] = temp[1]
+		f = open(CONF_PATH,"r")
+		ya = yaml.load(f)
+		f.close()
+		for k in dhcp_config:
+			dhcp_config[k] = ya['cobbler_dhcp'][k]
 		json = simplejson.dumps(dhcp_config)
 		return HttpResponse(json,mimetype="aplication/json")
 	elif request.method == 'POST':
@@ -256,31 +251,25 @@ def dhcp(request):
 		if form.is_valid():
 			for k in dhcp_config:
 				dhcp_config[k] = form.cleaned_data[k]
-			f = open(DEPLOY_CONF_PATH,'w')
+			f = open(CONF_PATH,"r")
+			ya = yaml.load(f)
+			f.close()
 			for k in dhcp_config:
-				f.write(k+ ' ' + dhcp_config[k])
-				f.write("\n")
+				ya['cobbler_dhcp'][k] = dhcp_config[k]
+			f = open(CONF_PATH,"w")
+			yaml.dump(ya,f,default_flow_style=False)
 			f.close()
 			ret = True
 			logger.info("update deploy configs success.")
 			iso_addr = request.POST['iso_addr']
 			if iso_addr[-4:] == '.iso':
-				iso_addr = ISO_DIR + iso_addr
-			print iso_addr
-			logger.info("sh /opt/openstack/scripts/deploy.sh %s" % iso_addr)
-			#p = os.system("/opt/openstack/scripts/deploy.sh %s" % iso_addr)
-			#if(p!=0):
-			#	ret = "sh deploy.sh false,please check the log !"
-			#p = commands.getstatusoutput("sh /opt/openstack/scripts/deploy.sh %s" % iso_addr)
-			#logger.info(str(p[0])+p[1])
-			#if p[0]!=0:
-			#	response.status_code = 500
-			#	time.sleep(10)
-			#	ret = "sh /opt/openstack/scripts/deploy.sh false,please check the log !"
-			#	f = open(DEPLOY_RESULT_PATH,'w')
-			#	f.write('2')
-			#	f.close()	
-			deploytask.delay(iso_addr)				
+				iso_addr = ISO_DIR + iso_addr	
+			try:
+				deploytask(iso_addr)	
+			except  SystemExit:
+				response.status_code = 500
+				logger.error("Set cobbler error!")
+				ret = str("设置cobbler失败，请检查日志文件")			
 		else:
 			response.status_code = 500
 			ret = str(form.errors)
@@ -296,16 +285,21 @@ def deployresult(request):
 		return HttpResponse(line)
 def ostype(request):
 	if request.method == 'GET':
-		f = open(OS_TYPE_PATH)
-		line = f.readline()
-		os_type = line.split()
+		f = open(CONF_PATH,"r")
+		ya = yaml.load(f)
+		f.close()
+		os_type = ya['deploy_os_type']
 		json = simplejson.dumps(os_type)
 		return HttpResponse(json,mimetype="aplication/json")
 	elif request.method == 'POST':
 		logger.info("post to set ostype .")
 		os_type = request.POST['OS_TYPE']
-		f = open(OS_TYPE_PATH,'w')
-		f.write('OS_TYPE' + ' ' + os_type)
+		f = open(CONF_PATH,"r")
+		ya = yaml.load(f)
+		f.close()
+		f = open(CONF_PATH,"w")
+		ya['deploy_os_type'] = os_type
+		yaml.dump(ya,f,default_flow_style=False)
 		f.close()
 		logger.info("set ostype success.")
 		return HttpResponse('True')
@@ -335,26 +329,6 @@ def deploy(request,hostname):
 	else:
 		# set ccrole conf	
 		host = get_object_or_404(Host,pk=hostname)
-		if len(host.ccrole_set.all())>0:
-			f1 = open(PUPPET_CONF_DIR+host.hostname+"/local.conf",'r')
-			lines = f1.readlines()
-			for line in lines:
-				if line.find("NODE_TYPE") != -1:
-					lines.remove(line)
-			lines.insert(0,"NODE_TYPE cc\n")	
-			f1 = open(PUPPET_CONF_DIR+host.hostname+"/local.conf",'w')	
-			f1.writelines(lines)
-			f1.close()
-		else:
-			f2 = open(PUPPET_CONF_DIR+host.hostname+"/local.conf",'r')
-			lines = f2.readlines()
-			for line in lines:
-				if line.find("NODE_TYPE")!=-1 :
-					lines.remove(line)
-			lines.insert(0,"NODE_TYPE nc\n")
-			f2 = open(PUPPET_CONF_DIR+host.hostname+"/local.conf",'w')	
-			f2.writelines(lines)	
-			f2.close()
 		add_puppet_node.delay(host)	
 	return response	
 

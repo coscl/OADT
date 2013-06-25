@@ -141,7 +141,7 @@ window.onload = function() {
 						this.block3mask.isMask(true);
 					} else {
 						$.post('ostype', {
-							OS_TYPE : 'ns6.0'
+							OS_TYPE : 'rhel6.4'
 						}, function(data) {
 							$('#os_right').show();
 							that.block2mask.isMask(false);
@@ -191,7 +191,7 @@ window.onload = function() {
 					$.get('cdpoint',function(files) {
 						if (files != '') {
 							$('#CD').append('<p><input type="radio" name="path" value="'+files.slice(0,files.indexOf(' '))
-									+(that._selectRadio==null||that._selectRadio.indexOf('/dev/')<0?'':' checked="checked"')+'"/>'+ 
+									+(that._selectRadio==null||that._selectRadio.indexOf('/dev/')<0?'"':'" checked="checked"')+'/>'+ 
 									files.slice(files.indexOf(' ') + 1)+ '</p>');
 						}else{
 							$('#CD').append('<p>无CD。</p>');
@@ -288,24 +288,9 @@ window.onload = function() {
 					var that = this;
 					if (options != null) {
 						this.submitTipmask.isMask(true);
-						
-//						$.ajax({
-//							type : "POST",
-//							url : 'dhcp',
-//							processData : true,
-//							data : options,
-//							timeout:(1000*60*15),
-//							success : function(data) {
-//								that.submitTipmask.isMask(false);
-//								$('#dhcp_right').show();
-//								that.block3mask.isMask(false);
-//								this.alert("提交成功。");
-//							},
-//							error:function(data){
-//								that.submitTipmask.isMask(false);
-//								this.alert(data.responseText);
-//							}
-//						});
+						$.ajaxSetup({
+							async:true						
+						});
 						
 						$.post('dhcp', options, function(data) {
 						}).error(function(data) {
@@ -314,9 +299,12 @@ window.onload = function() {
 							} else {
 								oadtView.alert(data.responseText);
 							}
+							that.submitTipmask.isMask(false);
+							clearInterval(getShStatusTimer);
 						});
 						
 						getShStatusTimer = setInterval(function(){
+						
 							$.get('deployresult',function(data){		
 								if (data.indexOf('1')>=0) {
 									$('#dhcp_right').show();
@@ -337,6 +325,7 @@ window.onload = function() {
 							clearInterval(getShStatusTimer);
 							that.submitTipmask.isMask(false);
 						},(1000*60*30));
+						
 						
 						
 					}
@@ -407,7 +396,7 @@ window.onload = function() {
 				createOSTypeCombo : function() {
 					var that = this;
 					$.get('ostype', function(data) {
-						if (data.length===1||data[1] === '') {
+						if (data==null||data.length===1||data[1] === '') {
 							$('#os_type')[0].selectedIndex = 0;
 							that._oldSelect = 0;
 						} else {

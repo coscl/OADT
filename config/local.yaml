@@ -1,0 +1,12 @@
+cobbler_server:
+    ip: 0.0.0.0
+my_cfg:
+    ip: 0.0.0.0
+    hostname: node
+    my_sql_password: mysql
+    network_manager: nova.network.manager.FlatDHCPManager
+    public_interface: eth0
+    flat_network_bridge: br100
+    flat_interface: eth0
+    fixed_range: 192.168.100.0/24
+    libvirt_type: kvm
