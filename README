@@ -5,3 +5,7 @@
 4 执行install.py
 5 成功安装完成后，手动执行python /opt/openstack/httpd/oadt/manage.py runserver 0.0.0.0:8000 (若提示8000端口被占用，则改为8001或8002...)
 6 打开浏览器，输入http://[your ip]:8000/index 进入管理界面进行操作
+
+
+使用遇到问题，请联系我：
+tao.jiang@cs2c.com.cn
